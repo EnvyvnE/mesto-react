@@ -5,13 +5,25 @@ import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
+import api from '../utils/api';
+import { CurrentUserContext } from '../context/CurrentUserContext';
 function App() {
     const [isEditAvatarOpened, setIsEditAvatarOpened] = React.useState(false);
     const [isEditProfileOpened, setIsEditProfileOpened] = React.useState(false);
     const [isAddPlaceOpened, setIsAddPlaceOpened] = React.useState(false);
     const [isSubmitDeleteOpened, setIsSubmitDeleteOpened] = React.useState(false);
     const [selectedCard, setSelectedCard] = React.useState(null);
+    const [currenUser, setCurrentUserInfo] = React.useState('');
 
+    React.useEffect(() => {
+        api.getUserInfo()
+            .then((currentUser) => {
+                setCurrentUserInfo(currentUser);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }, []);
 
 
     function handleEditAvatarClick() {
@@ -24,7 +36,6 @@ function App() {
         setIsAddPlaceOpened(true);
     }
     function handleSubmitDeleteClick() {
-        console.log('123')
         setIsSubmitDeleteOpened(true);
     }
     function closeAllPopups() {
@@ -37,8 +48,9 @@ function App() {
     function handleCardClick(card) {
         setSelectedCard(card);
     }
+    
     return (
-        <>
+        <CurrentUserContext.Provider value={currenUser}>
             <div className="page">
                 <Header />
 
@@ -72,7 +84,7 @@ function App() {
                 <Main handleSubmitDeleteClick={handleSubmitDeleteClick} handleCardClick={handleCardClick} handleEditAvatarClick={handleEditAvatarClick} handleAddPlaceClick={handleAddPlaceClick} handleEditProfileClick={handleEditProfileClick} />
                 <Footer />
             </div>
-        </>
+            </CurrentUserContext.Provider>
     );
 }
 

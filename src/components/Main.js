@@ -1,32 +1,36 @@
 import api from '../utils/api';
 import React from 'react';
 import Card from './Card';
+import { CurrentUserContext } from '../context/CurrentUserContext';
 function Main(props) {
-    const [userName, setUserName] = React.useState('');
-    const [userDescription, setUserDescription] = React.useState('');
-    const [userAvatar, setUserAvatar] = React.useState('');
+
     const [cards, setCards] = React.useState([]);
+    const currentUser = React.useContext(CurrentUserContext);
 
-
-
-    React.useEffect(() => {
-        api.getUserInfo()
-            .then((initialUser) => {
-                setUserName(initialUser.name);
-                setUserDescription(initialUser.about);
-                setUserAvatar(initialUser.avatar);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }, []);
+    function handleCardLike(card){ // Снова проверяем, есть ли уже лайк на этой карточке
+        const isLiked = card.likes.some(i => i._id === currentUser._id);
+        // Отправляем запрос в API и получаем обновлённые данные карточки
+        api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+            // Формируем новый массив на основе имеющегося, подставляя в него новую карточку
+          const newCards = cards.map((c) => c._id === card._id ? newCard : c);
+          // Обновляем стейт
+          setCards(newCards);
+        })
+        .catch((err)=>{
+            console.log(err);
+        });
+        }
+       function handleCardDelete(card){
+           const isOwn = card.owner._id === currentUser._id;
+           
+       } 
     React.useEffect(() => {
         api.getInitialCards()
             .then((initialCards => {
                 const cards = initialCards.map(item => {
                     return {
-                        id: item._id,
-                        src: item.link,
+                        _id: item._id,
+                        link: item.link,
                         name: item.name,
                         likes: item.likes
                     }
@@ -43,19 +47,19 @@ function Main(props) {
                 <section className="profile">
                     <div className="profile__image">
                         <div className="profile__pencil"></div>
-                        <div className="profile__avatar" style={{ backgroundImage: `url(${userAvatar})` }} onClick={props.handleEditAvatarClick}></div>
+                        <div className="profile__avatar" style={{ backgroundImage: `url(${currentUser.avatar})` }} onClick={props.handleEditAvatarClick}></div>
                     </div>
                     <div className="profile__info">
                         <div className="profile__title">
-                            <h1 className="profile__name">{userName}</h1>
+                            <h1 className="profile__name">{currentUser.name}</h1>
                             <button type="button" className="profile__edit-btn" onClick={props.handleEditProfileClick}></button>
                         </div>
-                        <p className="profile__job">{userDescription}</p>
+                        <p className="profile__job">{currentUser.about}</p>
                     </div>
                     <button type="button" className="profile__add-btn" onClick={props.handleAddPlaceClick}></button>
                 </section>
                 <section className="elements">
-                    {cards.map(item => <Card handleSubmitDeleteClick={props.handleSubmitDeleteClick} handleCardClick={props.handleCardClick} key={item.id} {...item} />)}
+                    {cards.map(item => <Card onCardLike ={handleCardLike} card = {item} handleSubmitDeleteClick={props.handleSubmitDeleteClick} handleCardClick={props.handleCardClick} key={item._id} {...item}/>)}
                 </section>
             </main>
         </>
