@@ -2,7 +2,7 @@ import React from 'react';
 import { CurrentUserContext } from '../context/CurrentUserContext';
 function Card(props) {
     const currentUser = React.useContext(CurrentUserContext);
-    const isOwn = props.card._id === currentUser._id;
+    const isOwn = props.card.owner._id === currentUser._id;
     const cardDeleteButtonClassName = (
         `element__trash ${isOwn ? 'element__trash' : 'element__trash_disabled'}`
       ); 
@@ -12,9 +12,9 @@ function Card(props) {
     function onCardClick() {
         props.handleCardClick(props)
     }
-    function onDeleteClick() {
-        props.handleSubmitDeleteClick(props);
-    }
+    // function onDeleteClick() {
+    //     props.handleSubmitDeleteClick(props);
+    // }
 
     function handleLikeClick(){
         props.onCardLike(props.card);
@@ -26,7 +26,7 @@ function Card(props) {
     return (
         <div className="element" >
             <img className="element__image" src={props.link} alt={props.name} onClick={onCardClick} />
-            <button type="button" onClick={handleDeleteClick} className={cardDeleteButtonClassName} onClick={onDeleteClick}></button>
+            <button type="button"  className={cardDeleteButtonClassName} onClick={handleDeleteClick}></button>
             <div className="element__info">
                 <h2 className="element__place">{props.name}</h2>
                 <div className="element__like-div">
