@@ -16,8 +16,7 @@ function App() {
     const [isAddPlaceOpened, setIsAddPlaceOpened] = React.useState(false);
     const [isSubmitDeleteOpened, setIsSubmitDeleteOpened] = React.useState(false);
     const [selectedCard, setSelectedCard] = React.useState(null);
-    const [currenUser, setCurrentUserInfo] = React.useState('');
-    const currentUser = React.useContext(CurrentUserContext);
+    const [currentUser, setCurrentUserInfo] = React.useState('');
 
     React.useEffect(() => {
         api.getUserInfo()
@@ -59,6 +58,9 @@ function App() {
             setCurrentUserInfo(currentUser);
             closeAllPopups();
         })
+        .catch((err)=>{
+            console.log(err);
+        });
 
     }
     function handleUpdateAvatar(data){
@@ -67,6 +69,9 @@ function App() {
             setCurrentUserInfo(currentUser);
             closeAllPopups();
         })
+        .catch((err)=>{
+            console.log(err);
+        });
     }
     function handleAddCard(data){
         api.postNewCard(data)
@@ -74,6 +79,9 @@ function App() {
             setCards([newCard, ...cards]); 
             closeAllPopups();
         })
+        .catch((err)=>{
+            console.log(err);
+        });
     }
     const [cards, setCards] = React.useState([]);
     function handleCardLike(card){ 
@@ -101,25 +109,17 @@ function App() {
        } 
     React.useEffect(() => {
         api.getInitialCards()
-            .then((initialCards => {
-                const cards = initialCards.map(item => {
-                    return {
-                        _id: item._id,
-                        link: item.link,
-                        name: item.name,
-                        likes: item.likes,
-                        owner: item.owner
-                    }
-                })
-                setCards(cards);
-            }))
+        .then((initialCards => {
+            setCards(initialCards);
+        }))
+
             .catch((err) => {
                 console.log(err);
             });
     }, []);
     
     return (
-        <CurrentUserContext.Provider value={currenUser}>
+        <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
                 <Header />
 

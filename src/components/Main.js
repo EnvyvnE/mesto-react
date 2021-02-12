@@ -24,7 +24,13 @@ function Main(props) {
                     <button type="button" className="profile__add-btn" onClick={props.handleAddPlaceClick}></button>
                 </section>
                 <section className="elements">
-                    {props.cards.map(item => <Card onCardDelete ={props.onCardDelete} onCardLike ={props.onCardLike} card = {item} handleSubmitDeleteClick={props.handleSubmitDeleteClick} handleCardClick={props.handleCardClick} key={item._id} {...item}/>)}
+                    {props.cards.map(item => (<Card onCardDelete ={props.onCardDelete}
+                     onCardLike ={props.onCardLike} 
+                     card = {item} 
+                     handleSubmitDeleteClick={props.handleSubmitDeleteClick} 
+                     handleCardClick={props.handleCardClick} 
+                     key={item._id} 
+                     {...item}/>))}
                 </section>
             </main>
         </>
